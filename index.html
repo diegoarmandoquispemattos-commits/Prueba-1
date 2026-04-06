@@ -1,455 +1,317 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Investigación de Redes - ARO Systems</title>
-<style>
-    /* Estilos Globales Modernos */
-    :root {
-        --primary-color: #0b5d5d; /* Verde azulado oscuro */
-        --secondary-color: #007bff; /* Azul vibrante */
-        --bg-color: #f0f4f8; /* Gris azulado muy claro */
-        --sidebar-bg: #e1e8ed;
-        --text-color: #333;
-        --panel-bg: #ffffff;
-        --shadow: 0 4px 6px rgba(0,0,0,0.1);
-        --transition: all 0.3s ease;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundamentos de Ingeniería de Software</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            min-height: 100vh;
+        }
 
-    * { box-sizing: border-box; }
+        /* Estilos del menú lateral izquierdo */
+        #sidebar {
+            width: 300px;
+            background-color: #ffffff;
+            color: #333;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-    }
+        #main-logo {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 30px;
+            cursor: pointer;
+            border-radius: 50%; /* Opcional, si quieres que se vea circular */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
-    /* Cabecera con Degradado */
-    header {
-        background: linear-gradient(135deg, var(--primary-color) 0%, #117a7a 100%);
-        color: white;
-        padding: 40px 20px;
-        text-align: center;
-        box-shadow: var(--shadow);
-    }
+        #sidebar h2 {
+            font-size: 1.2em;
+            color: #007777;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
 
-    header h1 {
-        margin: 0;
-        font-size: 2.5em;
-        font-weight: 300;
-        letter-spacing: 1px;
-    }
+        #sidebar ul {
+            list-style-type: none;
+            padding: 0;
+            width: 100%;
+        }
 
-    header p {
-        margin: 10px 0 0;
-        font-size: 1.2em;
-        opacity: 0.9;
-    }
+        #sidebar li {
+            margin-bottom: 10px;
+        }
 
-    /* Contenedor Principal (Flexbox) */
-    .container {
-        display: flex;
-        flex: 1;
-        max-width: 1400px;
-        margin: 0 auto;
-        width: 100%;
-        padding: 20px;
-    }
+        #sidebar a {
+            text-decoration: none;
+            color: #555;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
 
-    /* Barra de Navegación Lateral (Estilizada) */
-    nav {
-        width: 280px;
-        background-color: var(--sidebar-bg);
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: var(--shadow);
-        margin-right: 20px;
-        position: sticky;
-        top: 20px;
-        height: fit-content;
-    }
+        #sidebar a:hover {
+            background-color: #e0f2f1;
+            color: #007777;
+        }
 
-    nav h3 {
-        color: var(--primary-color);
-        text-transform: uppercase;
-        font-size: 0.9em;
-        letter-spacing: 2px;
-        margin-bottom: 25px;
-        border-bottom: 2px solid var(--primary-color);
-        padding-bottom: 10px;
-    }
+        #user-info-icon-link {
+            margin-top: auto; /* Empuja el ícono hacia abajo */
+            padding-top: 30px;
+            text-decoration: none;
+            display: block;
+            width: 80px;
+            height: 80px;
+        }
 
-    nav ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
+        #user-info-icon {
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
-    nav li {
-        margin-bottom: 15px;
-    }
+        /* Estilos del contenido principal */
+        #content {
+            margin-left: 320px; /* Ancho del sidebar + margen */
+            padding: 40px;
+            width: calc(100% - 320px);
+            background-color: #f9f9f9;
+        }
 
-    nav a {
-        color: var(--text-color);
-        text-decoration: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        font-size: 1.05em;
-        font-weight: 500;
-        transition: var(--transition);
-        padding: 10px;
-        border-radius: 8px;
-    }
+        .section-content {
+            display: none; /* Oculta todas las secciones por defecto */
+        }
 
-    nav a:hover {
-        background-color: var(--primary-color);
-        color: white;
-        transform: translateX(5px);
-    }
+        .section-content.active {
+            display: block; /* Muestra la sección activa */
+        }
 
-    /* Iconos de Menú (Emojies) */
-    .menu-icon {
-        margin-right: 12px;
-        font-size: 1.3em;
-    }
+        h1, h2, h3 {
+            color: #333;
+        }
 
-    /* Área de Contenido Principal (Tarjetas) */
-    main {
-        flex: 1;
-    }
+        h1 {
+            border-bottom: 2px solid #007777;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
 
-    section {
-        display: none;
-        background-color: var(--panel-bg);
-        padding: 40px;
-        border-radius: 15px;
-        box-shadow: var(--shadow);
-        animation: fadeIn 0.5s ease-in-out;
-    }
+        h2 {
+            color: #007777;
+            margin-top: 30px;
+        }
 
-    section.active {
-        display: block;
-    }
+        p {
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 15px;
+        }
 
-    h2 {
-        color: var(--primary-color);
-        border-bottom: 2px solid #e1e8ed;
-        padding-bottom: 15px;
-        margin-top: 0;
-        margin-bottom: 30px;
-        font-size: 2em;
-        font-weight: 600;
-    }
+        .image-placeholder {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
 
-    h3.sub-title {
-        color: #117a7a;
-        margin-top: 30px;
-        margin-bottom: 15px;
-        font-size: 1.5em;
-        font-weight: 500;
-    }
+        /* Estilos específicos para la sección de información personal */
+        #personal-info {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
 
-    p {
-        line-height: 1.8;
-        font-size: 1.1em;
-        margin-bottom: 20px;
-        color: #555;
-    }
+        #personal-info h2 {
+            text-align: center;
+        }
 
-    /* Imágenes Estilizadas (Secciones y Perfil) */
-    img.topic-img {
-        max-width: 100%;
-        height: auto;
-        margin: 10px 0 30px 0; /* Espaciado modificado: poco arriba, más abajo */
-        border-radius: 12px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-        display: block;
-        transition: var(--transition);
-    }
+        .info-field {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
 
-    img.topic-img:hover {
-        transform: scale(1.02);
-    }
+        .info-label {
+            font-weight: bold;
+            color: #007777;
+            width: 150px;
+        }
 
-    /* Listas con Iconos */
-    section ul {
-        list-style: none;
-        padding: 0;
-        margin-bottom: 30px;
-    }
-
-    section li {
-        position: relative;
-        padding-left: 30px;
-        margin-bottom: 12px;
-        font-size: 1.05em;
-        color: #555;
-    }
-
-    section li::before {
-        content: '✓';
-        position: absolute;
-        left: 0;
-        color: var(--secondary-color);
-        font-weight: bold;
-    }
-
-    /* Sección de Perfil */
-    .perfil-card {
-        display: flex;
-        align-items: center;
-        background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        margin-top: 20px;
-        border: 1px solid #e1e8ed;
-    }
-
-    .perfil-img-container {
-        width: 180px;
-        height: 180px;
-        border-radius: 50%;
-        overflow: hidden;
-        margin-right: 40px;
-        border: 6px solid white;
-        box-shadow: var(--shadow);
-    }
-
-    .perfil-img-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .perfil-info p {
-        margin: 10px 0;
-        font-size: 1.15em;
-    }
-
-    .perfil-info b {
-        color: var(--primary-color);
-        margin-right: 10px;
-    }
-
-    /* Pie de Página */
-    footer {
-        background-color: var(--primary-color);
-        color: white;
-        text-align: center;
-        padding: 20px;
-        margin-top: 40px;
-    }
-
-    /* Animaciones */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Adaptabilidad Móvil */
-    @media (max-width: 768px) {
-        .container { flex-direction: column; padding: 10px; }
-        nav { width: 100%; margin-right: 0; margin-bottom: 20px; position: relative; top: 0; padding: 20px; }
-        section { padding: 25px; }
-        h1 { font-size: 2em; }
-        .perfil-card { flex-direction: column; text-align: center; }
-        .perfil-img-container { margin-right: 0; margin-bottom: 20px; }
-    }
-</style>
-
-<script>
-    function mostrar(id){
-        // Ocultar todas las secciones
-        let secciones = document.querySelectorAll("section");
-        secciones.forEach(sec => sec.classList.remove("active"));
-        
-        // Mostrar la sección seleccionada
-        document.getElementById(id).classList.add("active");
-        
-        // Desplazarse al inicio del contenido
-        document.querySelector("main").scrollIntoView({ behavior: 'smooth' });
-    }
-</script>
-
+        .info-value {
+            color: #333;
+        }
+    </style>
 </head>
 <body>
 
-<header>
-    <h1>Investigación sobre Redes</h1>
-    <p>ARO Systems · Soluciones Tecnológicas Integrales</p>
-</header>
+    <div id="sidebar">
+        <a href="#inicio" onclick="showSection('inicio')">
+            <img src="aro_logo.png" alt="Logo de ARO Systems" id="main-logo">
+        </a>
 
-<div class="container">
+        <h2>Temas de Software</h2>
+        <ul>
+            <li><a href="#introduccion" onclick="showSection('introduccion')">1. Introducción al Software</a></li>
+            <li><a href="#clasificacion" onclick="showSection('clasificacion')">2. Clasificación del Software</a></li>
+            <li><a href="#ciclo-vida" onclick="showSection('ciclo-vida')">3. Ciclos de Vida del Software</a></li>
+            <li><a href="#metodologias" onclick="showSection('metodologias')">4. Metodologías de Desarrollo</a></li>
+            <li><a href="#calidad" onclick="showSection('calidad')">5. Calidad del Software</a></li>
+            <li><a href="#tendencias" onclick="showSection('tendencias')">6. Tendencias Actuales</a></li>
+        </ul>
 
-<nav>
-    <h3>TEMAS</h3>
-    <ul>
-        <li><a onclick="mostrar('intro')"><span class="menu-icon">🌐</span>Introducción</a></li>
-        <li><a onclick="mostrar('osi')"><span class="menu-icon">📊</span>Modelo OSI y TCP/IP</a></li>
-        <li><a onclick="mostrar('protocolos')"><span class="menu-icon">📜</span>Protocolos</a></li>
-        <li><a onclick="mostrar('topologias')"><span class="menu-icon">🕸️</span>Topologías</a></li>
-        <li><a onclick="mostrar('software')"><span class="menu-icon">💻</span>Software y Simuladores</a></li>
-        <li><a onclick="mostrar('dispositivos')"><span class="menu-icon">📡</span>Dispositivos</a></li>
-        <li><a onclick="mostrar('cableado')"><span class="menu-icon">🔌</span>Cableado UTP</a></li>
-        <li><a onclick="mostrar('perfil')"><span class="menu-icon">👤</span>Información Personal</a></li>
-    </ul>
-</nav>
-
-<main>
-
-<section id="intro" class="active">
-    <h2>Introducción a las Redes</h2>
-    
-    <h3 class="sub-title">¿Qué son las redes de computadoras?</h3>
-    <p>
-        Las redes de computadoras son sistemas fundamentales de comunicación que permiten la interconexión de múltiples dispositivos (como ordenadores, servidores, y dispositivos inteligentes) con el fin primordial de compartir información, recursos y servicios.
-    </p>
-    <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1200&auto=format&fit=crop" class="topic-img" alt="Visualización de una red global de datos">
-
-    <h3 class="sub-title">Importancia en el mundo moderno</h3>
-    <p>
-        Gracias a las redes, hoy es posible enviar mensajes instantáneos, realizar videollamadas, acceder a grandes volúmenes de información en tiempo real y trabajar de forma colaborativa desde cualquier lugar del mundo. Son la columna vertebral de la sociedad de la información.
-    </p>
-    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop" class="topic-img" alt="Personas colaborando digitalmente">
-</section>
-
-<section id="osi">
-    <h2>Modelos de Referencia: OSI y TCP/IP</h2>
-    
-    <h3 class="sub-title">El Modelo OSI (7 Capas)</h3>
-    <p>
-        <b>El modelo OSI (Open Systems Interconnection)</b> es un estándar de 7 capas que ayuda a entender el proceso de comunicación desde el hardware físico hasta la aplicación del usuario. Provee una estructura teórica para la interoperabilidad.
-    </p>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3b/Osi-model-jb.svg" class="topic-img" alt="Diagrama del Modelo OSI">
-
-    <h3 class="sub-title">El Modelo TCP/IP (4 Capas)</h3>
-    <p>
-        Por otro lado, <b>el modelo TCP/IP</b> es el protocolo pragmático utilizado en Internet, simplificando el proceso en 4 capas clave. Es el modelo funcional que hace posible la red global actual.
-    </p>
-    <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=1200&auto=format&fit=crop" class="topic-img" alt="Abstracto de flujo de datos en capas">
-</section>
-
-<section id="protocolos">
-    <h2>Protocolos de Comunicación</h2>
-    
-    <h3 class="sub-title">¿Qué es un protocolo?</h3>
-    <p>
-        Los protocolos son el "lenguaje" de la red. Son conjuntos de reglas y estándares que permiten que dispositivos heterogéneos se comuniquen correctamente. Sin ellos, el intercambio de datos sería caótico.
-    </p>
-    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1200&auto=format&fit=crop" class="topic-img" alt="Tecnología de comunicación y datos">
-
-    <h3 class="sub-title">Protocolos Fundamentales</h3>
-    <p>
-        Algunos protocolos esenciales que utilizamos diariamente son:
-    </p>
-    <ul>
-        <li><b>HTTP:</b> Para la navegación web.</li>
-        <li><b>IP:</b> Para el direccionamiento y enrutamiento.</li>
-        <li><b>TCP:</b> Para asegurar transmisiones fiables.</li>
-        <li><b>DNS:</b> Para traducir nombres de dominio.</li>
-    </ul>
-    <img src="https://images.unsplash.com/photo-1484417824246-34ac1e0f6c2c?q=80&w=1200&auto=format&fit=crop" class="topic-img" alt="Código y estructura web">
-</section>
-
-<section id="topologias">
-    <h2>Topologías de Red</h2>
-    
-    <h3 class="sub-title">Disposición Física y Lógica</h3>
-    <p>
-        La topología de red define la disposición física o lógica de los dispositivos y sus conexiones. La elección de la topología afecta la escalabilidad, el coste y la facilidad de administración.
-    </p>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/9/97/NetworkTopologies.svg" class="topic-img" alt="Diagramas de topologías comunes">
-
-    <h3 class="sub-title">Topologías Comunes y Características</h3>
-    <p>
-        Diferentes tipos de topologías y sus usos:
-    </p>
-    <ul>
-        <li><b>Estrella:</b> (Común) Centralizada en un switch. Fácil de diagnosticar.</li>
-        <li><b>Malla:</b> (Reliable) Redundante. Alta fiabilidad, pero costosa.</li>
-        <li><b>Bus:</b> (Simple) Un solo cable troncal.</li>
-    </ul>
-    <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop" class="topic-img" alt="Diagrama abstracto de conexiones de red">
-</section>
-
-<section id="software">
-    <h2>Software de Red y Simuladores</h2>
-    
-    <h3 class="sub-title">Software de Administración y Monitoreo</h3>
-    <p>
-        El software de red es crucial para la administración, monitoreo y seguridad. Incluye desde los sistemas operativos de red hasta herramientas de diagnóstico de tráfico y gestión de seguridad.
-    </p>
-    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop" class="topic-img" alt="Pantalla mostrando gráficos de datos y monitoreo">
-
-    <h3 class="sub-title">Simuladores como Herramientas Educativas</h3>
-    <p>
-        <b>Simuladores como Cisco Packet Tracer:</b> Son herramientas educativas potentes que permiten a estudiantes y profesionales diseñar, configurar y solucionar problemas de redes en un entorno virtual seguro, sin necesidad de hardware físico costoso.
-    </p>
-    <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1200&auto=format&fit=crop" class="topic-img" alt="Persona programando o simulando redes en PC">
-</section>
-
-<section id="dispositivos">
-    <h2>Dispositivos de Red Esenciales</h2>
-    
-    <h3 class="sub-title">Hardware de Interconexión</h3>
-    <p>
-        Para construir una red funcional, se requieren dispositivos de hardware que gestionen el flujo de datos y conecten los hosts de manera eficiente.
-    </p>
-    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc51?q=80&w=1200&auto=format&fit=crop" class="topic-img" alt="Un rack de servidores con luces LED">
-
-    <h3 class="sub-title">Principales Componentes y Funciones</h3>
-    <ul>
-        <li><b>Router:</b> Conecta redes distintas y determina la mejor ruta.</li>
-        <li><b>Switch:</b> Conecta dispositivos dentro de una misma LAN (inteligente).</li>
-        <li><b>Access Point:</b> Permite la conexión inalámbrica Wi-Fi.</li>
-    </ul>
-    <img src="https://images.unsplash.com/photo-1544890225-2f3faec4cd60?q=80&w=1200&auto=format&fit=crop" class="topic-img" alt="Dispositivos de red domésticos o de oficina">
-</section>
-
-<section id="cableado">
-    <h2>Cableado UTP y Códigos de Colores</h2>
-    
-    <h3 class="sub-title">El Medio Físico Estándar</h3>
-    <p>
-        El cable UTP (Unshielded Twisted Pair) es el estándar físico más utilizado para redes LAN cableadas. Su rendimiento depende de una terminación correcta y precisa en los conectores RJ-45.
-    </p>
-    <img src="https://images.unsplash.com/photo-1629618195886-f4f9f44a377d?q=80&w=1200&auto=format&fit=crop" class="topic-img" alt="Conector RJ-45 y cables de colores">
-
-    <h3 class="sub-title">Los Estándares T568A y T568B</h3>
-    <p>
-        Los estándares T568A y T568B definen el orden preciso de los 8 hilos de colores para garantizar la compatibilidad y el rendimiento. El orden T568B es el más extendido universalmente.
-    </p>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/RJ-45_T568B.svg" class="topic-img" style="max-width:400px; margin-left:auto; margin-right:auto;" alt="Diagrama de cableado T568B">
-</section>
-
-<section id="perfil">
-    <h2>Información del Estudiante</h2>
-    <div class="perfil-card">
-        <div class="perfil-img-container">
-            <img src="image_0.png" alt="Foto de perfil de Diego Armando">
-        </div>
-        <div class="perfil-info">
-            <p><b>Nombre:</b> Diego Armando</p>
-            <p><b>Curso:</b> Fundamentos de Redes de Computadoras</p>
-            <p><b>Institución:</b> U.B.I. (Universidad Boliviana Internacional)</p>
-            <p><b>Año:</b> 2026</p>
-        </div>
+        <a href="#informacion-personal" id="user-info-icon-link" onclick="showSection('personal-info')">
+            <img src="user_icon.png" alt="Ícono de Usuario" id="user-info-icon">
+        </a>
     </div>
-</section>
 
-</main>
-</div>
+    <div id="content">
 
-<footer>
-    <p>ARO Systems © 2026 · Proyecto de Investigación Estudiantil</p>
-</footer>
+        <div id="inicio" class="section-content active">
+            <h1>Bienvenido a la Guía Completa de Software</h1>
+            <p>Utiliza el menú de la izquierda para explorar los diferentes temas relacionados con la ingeniería de software, desde sus conceptos básicos hasta los complejos ciclos de vida y las tendencias más modernas.</p>
+            <p>Haciendo clic en el logo de "ARO Systems" en la parte superior izquierda, volverás a esta página de inicio.</p>
+            <p>Haciendo clic en el ícono de usuario en la parte inferior izquierda, verás la información personal del autor.</p>
+        </div>
+
+        <div id="introduccion" class="section-content">
+            <h1>1. Introducción al Software y la Ingeniería de Software</h1>
+            <h2>¿Qué es el Software?</h2>
+            <p>El software es el conjunto de programas de cómputo, procedimientos, reglas, documentación y datos asociados que forman parte de las operaciones de un sistema de computación. A diferencia del hardware, que es tangible, el software es el componente lógico.</p>
+            <p>En términos simples, es el conjunto de instrucciones que le dicen al hardware qué hacer.</p>
+            
+            <h2>¿Qué es la Ingeniería de Software?</h2>
+            <p>La Ingeniería de Software es una disciplina de la ingeniería que se ocupa de todos los aspectos de la producción de software, desde las etapas iniciales de la especificación del sistema hasta el mantenimiento del sistema después de que se ha puesto en uso.</p>
+            <p>Su objetivo es producir software de alta calidad de manera eficiente, dentro del presupuesto y en el plazo establecido.</p>
+            <img src="computer.png" alt="Sistema Computacional" class="image-placeholder">
+        </div>
+
+        <div id="clasificacion" class="section-content">
+            <h1>2. Clasificación del Software</h1>
+            <p>El software se puede clasificar en varias categorías principales basadas en su función y propósito:</p>
+            <ul>
+                <li><strong>Software de Sistema:</strong> Programas que gestionan y controlan el hardware de la computadora, como sistemas operativos (Windows, Linux, macOS) y controladores de dispositivos.</li>
+                <li><strong>Software de Aplicación:</strong> Programas diseñados para ayudar a los usuarios a realizar tareas específicas, como procesadores de texto (Word), hojas de cálculo (Excel), navegadores web (Chrome) y juegos.</li>
+                <li><strong>Software de Programación (Herramientas de Desarrollo):</strong> Programas utilizados por los programadores para crear, depurar, mantener o apoyar otros programas y aplicaciones, como compiladores, depuradores y editores de texto (VS Code, IntelliJ).</li>
+            </ul>
+        </div>
+
+        <div id="ciclo-vida" class="section-content">
+            <h1>3. Ciclos de Vida del Software (SDLC)</h1>
+            <p>El Ciclo de Vida del Desarrollo de Software (SDLC) es un proceso estructurado utilizado para planificar, crear, probar y desplegar un sistema de información.</p>
+            <h2>Etapas Comunes del SDLC</h2>
+            <ol>
+                <li><strong>Planificación y Análisis de Requisitos:</strong> Definir qué debe hacer el software. Es la etapa más crítica.</li>
+                <li><strong>Diseño:</strong> Crear la arquitectura del software, los diagramas de base de datos y la interfaz de usuario.</li>
+                <li><strong>Implementación (Codificación):</strong> Los desarrolladores escriben el código real basado en el diseño.</li>
+                <li><strong>Pruebas (Testing):</strong> Verificar que el software funcione correctamente y cumpla con los requisitos definidos. Se buscan errores (bugs).</li>
+                <li><strong>Despliegue (Deployment):</strong> El software se pone a disposición de los usuarios finales en un entorno de producción.</li>
+                <li><strong>Mantenimiento:</strong> Se corrigen errores descubiertos después del lanzamiento, se añaden nuevas funcionalidades y se actualiza el sistema.</li>
+            </ol>
+        </div>
+
+        <div id="ciclo-vida" class="section-content">
+            <h1>3. Ciclos de Vida del Software (SDLC)</h1>
+            <p>El Ciclo de Vida del Desarrollo de Software (SDLC) es un proceso estructurado utilizado para planificar, crear, probar y desplegar un sistema de información.</p>
+            <h2>Etapas Comunes del SDLC</h2>
+            <ol>
+                <li><strong>Planificación y Análisis de Requisitos:</strong> Definir qué debe hacer el software. Es la etapa más crítica.</li>
+                <li><strong>Diseño:</strong> Crear la arquitectura del software, los diagramas de base de datos y la interfaz de usuario.</li>
+                <li><strong>Implementación (Codificación):</strong> Los desarrolladores escriben el código real basado en el diseño.</li>
+                <li><strong>Pruebas (Testing):</strong> Verificar que el software funcione correctamente y cumpla con los requisitos definidos. Se buscan errores (bugs).</li>
+                <li><strong>Despliegue (Deployment):</strong> El software se pone a disposición de los usuarios finales en un entorno de producción.</li>
+                <li><strong>Mantenimiento:</strong> Se corrigen errores descubiertos después del lanzamiento, se añaden nuevas funcionalidades y se actualiza el sistema.</li>
+            </ol>
+        </div>
+
+        <div id="metodologias" class="section-content">
+            <h1>4. Metodologías de Desarrollo</h1>
+            <p>Existen diferentes enfoques para gestionar el proceso de desarrollo de software:</p>
+            <h2>Metodologías Tradicionales (Ej: Cascada)</h2>
+            <p>Es un enfoque lineal y secuencial donde cada etapa del ciclo de vida debe completarse antes de pasar a la siguiente. Es rígido y difícil de cambiar una vez que comienza.</p>
+            
+            <h2>Metodologías Ágiles (Ej: Scrum, Kanban)</h2>
+            <p>Es un enfoque iterativo e incremental. Se centra en la entrega temprana y continua de software valioso, la colaboración con el cliente y la respuesta al cambio. Scrum es muy popular, organizando el trabajo en ciclos cortos llamados "Sprints".</p>
+        </div>
+
+        <div id="calidad" class="section-content">
+            <h1>5. Calidad del Software</h1>
+            <p>La calidad del software no se refiere solo a la ausencia de errores, sino a un conjunto de atributos medibles:</p>
+            <ul>
+                <li><strong>Funcionalidad:</strong> ¿Hace lo que se supone que debe hacer?</li>
+                <li><strong>Fiabilidad:</strong> ¿Es robusto y estable? ¿Falla con frecuencia?</li>
+                <li><strong>Usabilidad:</strong> ¿Es fácil de aprender y usar para el usuario final?</li>
+                <li><strong>Eficiencia:</strong> ¿Utiliza los recursos del sistema (CPU, memoria) de manera óptima?</li>
+                <li><strong>Mantenibilidad:</strong> ¿Es fácil de modificar, actualizar o corregir en el futuro?</li>
+                <li><strong>Portabilidad:</strong> ¿Puede funcionar en diferentes plataformas o entornos?</li>
+            </ul>
+        </div>
+
+        <div id="tendencias" class="section-content">
+            <h1>6. Tendencias Actuales en Software</h1>
+            <p>El mundo del software está en constante evolución. Algunas de las tendencias más significativas incluyen:</p>
+            <ul>
+                <li><strong>Inteligencia Artificial (IA) y Aprendizaje Automático (Machine Learning):</strong> Integración de capacidades de IA en todo tipo de aplicaciones.</li>
+                <li><strong>Computación en la Nube (Cloud Computing):</strong> El cambio de la infraestructura local a servicios basados en la nube (AWS, Azure, Google Cloud).</li>
+                <li><strong>Ciberseguridad:</strong> Un enfoque masivo en proteger el software y los datos de amenazas cada vez más complejas.</li>
+                <li><strong>Internet de las Cosas (IoT):</strong> Desarrollo de software para dispositivos conectados en el hogar, la industria y la salud.</li>
+                <li><strong>Microservicios:</strong> Arquitectura de software que construye aplicaciones como un conjunto de pequeños servicios independientes.</li>
+            </ul>
+        </div>
+
+        <div id="personal-info" class="section-content">
+            <h1>Información de Contacto</h1>
+            <h2>Datos Personales</h2>
+            <div class="info-field">
+                <span class="info-label">Nombre Completo:</span>
+                <span class="info-value">Diego Armando Quispe Mattos</span>
+            </div>
+            <div class="info-field">
+                <span class="info-label">Universidad:</span>
+                <span class="info-value">UBI, UNIVERSIDAD BOLIVIANA DE INFORMÁTICA</span>
+            </div>
+            <div class="info-field">
+                <span class="info-label">Carrera:</span>
+                <span class="info-value">Ingeniería en Sistemas</span>
+            </div>
+            <p style="text-align: center; margin-top: 30px; color: #999;">Esta página fue creada como parte de un proyecto académico sobre ingeniería de software.</p>
+        </div>
+
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Oculta todas las secciones de contenido
+            const sections = document.querySelectorAll('.section-content');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Muestra la sección solicitada
+            const selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.classList.add('active');
+            }
+        }
+    </script>
 
 </body>
 </html>
